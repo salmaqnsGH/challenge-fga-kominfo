@@ -8,7 +8,7 @@ func main() {
 	fmt.Printf("%T \n", i)
 	fmt.Printf("%% \n")
 	j := true
-	fmt.Printf("%v \n", j)
+	fmt.Printf("%t \n", j)
 
 	fmt.Printf("\n")
 
@@ -17,8 +17,9 @@ func main() {
 	fmt.Printf("%c \n", c)
 	fmt.Printf("%d \n", i)
 	fmt.Printf("%o \n", i)
-	fmt.Printf("%v \n", "f")
-	fmt.Printf("%v \n", "F")
+	l := 15
+	fmt.Printf("%x \n", l)
+	fmt.Printf("%X \n", l)
 	fmt.Printf("%U \n", c)
 
 	fmt.Printf("\n")
