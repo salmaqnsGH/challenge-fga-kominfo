@@ -13,14 +13,14 @@ func main() {
 	fmt.Printf("\n")
 
 	fmt.Printf("%b \n", i)
-	c := 'Я'
-	fmt.Printf("%c \n", c)
+	s := '\u042F'
+	fmt.Printf("%c\n", s)
 	fmt.Printf("%d \n", i)
 	fmt.Printf("%o \n", i)
 	l := 15
 	fmt.Printf("%x \n", l)
 	fmt.Printf("%X \n", l)
-	fmt.Printf("%U \n", c)
+	fmt.Printf("%U \n", 'Я')
 
 	fmt.Printf("\n")
 
