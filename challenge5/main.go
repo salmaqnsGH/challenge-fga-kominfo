@@ -58,7 +58,6 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-type", "application/json")
 
 	json.NewEncoder(w).Encode(books)
-
 }
 
 func addBook(w http.ResponseWriter, r *http.Request) {
@@ -93,6 +92,17 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 	params := strings.TrimPrefix(r.URL.Path, "/books/")
 	bookID, _ := strconv.Atoi(params)
 
+	var isBookExist bool
+	for _, book := range books {
+		if book.ID == bookID {
+			isBookExist = true
+		}
+	}
+	if !isBookExist {
+		http.Error(w, "Book not found", http.StatusBadRequest)
+		return
+	}
+
 	json.NewEncoder(w).Encode(books[bookID-1])
 }
 
@@ -101,6 +111,17 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 
 	params := strings.TrimPrefix(r.URL.Path, "/books/")
 	bookID, _ := strconv.Atoi(params)
+
+	var isBookExist bool
+	for _, book := range books {
+		if book.ID == bookID {
+			isBookExist = true
+		}
+	}
+	if !isBookExist {
+		http.Error(w, "Book not found", http.StatusBadRequest)
+		return
+	}
 
 	body, _ := ioutil.ReadAll(r.Body)
 
@@ -125,6 +146,17 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 
 	params := strings.TrimPrefix(r.URL.Path, "/books/")
 	bookID, _ := strconv.Atoi(params)
+
+	var isBookExist bool
+	for _, book := range books {
+		if book.ID == bookID {
+			isBookExist = true
+		}
+	}
+	if !isBookExist {
+		http.Error(w, "Book not found", http.StatusBadRequest)
+		return
+	}
 
 	for i, book := range books {
 		if book.ID == bookID {
