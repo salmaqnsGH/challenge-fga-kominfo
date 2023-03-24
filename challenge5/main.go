@@ -24,13 +24,25 @@ var books = []Book{
 }
 
 func main() {
-	http.HandleFunc("/books", getBooks)
-	http.HandleFunc("/books/new", addBook)
+	http.HandleFunc("/books", handleBooks)
+	// http.HandleFunc("/books/new", addBook)
+
 	http.HandleFunc("/books/", getBook)
 	http.HandleFunc("/books/update/", updateBook)
 	http.HandleFunc("/books/delete/", deleteBook)
 
 	http.ListenAndServe(PORT, nil)
+}
+
+func handleBooks(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		getBooks(w, r)
+	case http.MethodPost:
+		addBook(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
 }
 
 func getBooks(w http.ResponseWriter, r *http.Request) {
