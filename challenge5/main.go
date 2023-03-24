@@ -25,11 +25,7 @@ var books = []Book{
 
 func main() {
 	http.HandleFunc("/books", handleBooks)
-	// http.HandleFunc("/books/new", addBook)
-
-	http.HandleFunc("/books/", getBook)
-	http.HandleFunc("/books/update/", updateBook)
-	http.HandleFunc("/books/delete/", deleteBook)
+	http.HandleFunc("/books/", handleBook)
 
 	http.ListenAndServe(PORT, nil)
 }
@@ -45,46 +41,50 @@ func handleBooks(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleBook(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		getBook(w, r)
+	case http.MethodPut:
+		updateBook(w, r)
+	case http.MethodDelete:
+		deleteBook(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-type", "application/json")
 
-	if r.Method == "GET" {
-		json.NewEncoder(w).Encode(books)
-		return
-	}
+	json.NewEncoder(w).Encode(books)
 
-	http.Error(w, "Method is not allowed", http.StatusBadRequest)
 }
 
 func addBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-type", "application/json")
 
-	if r.Method == "POST" {
-		body, _ := ioutil.ReadAll(r.Body)
+	body, _ := ioutil.ReadAll(r.Body)
 
-		var book Book
+	var book Book
 
-		err := json.Unmarshal(body, &book)
-		if err != nil {
-			http.Error(w, "Error parsing request body", http.StatusBadRequest)
-			return
-		}
-
-		book.ID = len(books) + 1
-
-		newBook := Book{
-			ID:     book.ID,
-			Title:  book.Title,
-			Author: book.Author,
-			Desc:   book.Desc,
-		}
-		books = append(books, newBook)
-
-		json.NewEncoder(w).Encode("Created")
+	err := json.Unmarshal(body, &book)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
 		return
 	}
 
-	http.Error(w, "Method is not allowed", http.StatusBadRequest)
+	book.ID = len(books) + 1
+
+	newBook := Book{
+		ID:     book.ID,
+		Title:  book.Title,
+		Author: book.Author,
+		Desc:   book.Desc,
+	}
+	books = append(books, newBook)
+
+	json.NewEncoder(w).Encode("Created")
 }
 
 func getBook(w http.ResponseWriter, r *http.Request) {
@@ -93,58 +93,44 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 	params := strings.TrimPrefix(r.URL.Path, "/books/")
 	bookID, _ := strconv.Atoi(params)
 
-	if r.Method == "GET" {
-		json.NewEncoder(w).Encode(books[bookID-1])
-		return
-	}
-
-	http.Error(w, "Method is not allowed", http.StatusBadRequest)
+	json.NewEncoder(w).Encode(books[bookID-1])
 }
 
 func updateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-type", "application/json")
 
-	params := strings.TrimPrefix(r.URL.Path, "/books/update/")
+	params := strings.TrimPrefix(r.URL.Path, "/books/")
 	bookID, _ := strconv.Atoi(params)
 
-	if r.Method == "PUT" {
-		body, _ := ioutil.ReadAll(r.Body)
+	body, _ := ioutil.ReadAll(r.Body)
 
-		var book Book
+	var book Book
 
-		err := json.Unmarshal(body, &book)
-		if err != nil {
-			http.Error(w, "Error parsing request body", http.StatusBadRequest)
-			return
-		}
-
-		books[bookID-1].ID = bookID
-		books[bookID-1].Title = book.Title
-		books[bookID-1].Author = book.Author
-		books[bookID-1].Desc = book.Desc
-
-		json.NewEncoder(w).Encode("Updated")
+	err := json.Unmarshal(body, &book)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
 		return
 	}
 
-	http.Error(w, "Method is not allowed", http.StatusBadRequest)
+	books[bookID-1].ID = bookID
+	books[bookID-1].Title = book.Title
+	books[bookID-1].Author = book.Author
+	books[bookID-1].Desc = book.Desc
+
+	json.NewEncoder(w).Encode("Updated")
 }
 
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-type", "application/json")
 
-	params := strings.TrimPrefix(r.URL.Path, "/books/delete/")
+	params := strings.TrimPrefix(r.URL.Path, "/books/")
 	bookID, _ := strconv.Atoi(params)
 
-	if r.Method == "DELETE" {
-		for i, book := range books {
-			if book.ID == bookID {
-				books = append(books[:i], books[i+1:]...)
-			}
+	for i, book := range books {
+		if book.ID == bookID {
+			books = append(books[:i], books[i+1:]...)
 		}
-		json.NewEncoder(w).Encode("Deleted")
-		return
 	}
+	json.NewEncoder(w).Encode("Deleted")
 
-	http.Error(w, "Method is not allowed", http.StatusBadRequest)
 }
