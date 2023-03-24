@@ -11,10 +11,10 @@ import (
 const PORT = ":4000"
 
 type Book struct {
-	ID     int
-	Title  string
-	Author string
-	Desc   string
+	ID     int    `json:"id"`
+	Title  string `json:"title"`
+	Author string `json:"author"`
+	Desc   string `json:"desc"`
 }
 
 var books = []Book{
