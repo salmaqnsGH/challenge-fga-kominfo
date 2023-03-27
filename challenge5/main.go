@@ -1,168 +1,155 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
-	"strconv"
-	"strings"
+	router "belajar-gin/routers"
 )
 
 const PORT = ":4000"
 
-type Book struct {
-	ID     int    `json:"id"`
-	Title  string `json:"title"`
-	Author string `json:"author"`
-	Desc   string `json:"desc"`
-}
-
-var books = []Book{
-	{ID: 1, Title: "Naruto", Author: "Masashi K", Desc: "a descrition of thebook"},
-	{ID: 2, Title: "Rich Dad Poor Dad", Author: "Robert Kiyosaki", Desc: "a descrition of thebook"},
-	{ID: 3, Title: "Harry Potter", Author: "J.K Rowling", Desc: "a descrition of thebook"},
-}
-
 func main() {
-	http.HandleFunc("/books", handleBooks)
-	http.HandleFunc("/books/", handleBook)
-
-	http.ListenAndServe(PORT, nil)
+	router.StartServer().Run(PORT)
 }
 
-func handleBooks(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		getBooks(w, r)
-	case http.MethodPost:
-		addBook(w, r)
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
+// func main() {
+// 	http.HandleFunc("/books", handleBooks)
+// 	http.HandleFunc("/books/", handleBook)
 
-func handleBook(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		getBook(w, r)
-	case http.MethodPut:
-		updateBook(w, r)
-	case http.MethodDelete:
-		deleteBook(w, r)
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
+// 	http.ListenAndServe(PORT, nil)
+// }
 
-func getBooks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-type", "application/json")
+// func handleBooks(w http.ResponseWriter, r *http.Request) {
+// 	switch r.Method {
+// 	case http.MethodGet:
+// 		getBooks(w, r)
+// 	case http.MethodPost:
+// 		addBook(w, r)
+// 	default:
+// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+// 	}
+// }
 
-	json.NewEncoder(w).Encode(books)
-}
+// func handleBook(w http.ResponseWriter, r *http.Request) {
+// 	switch r.Method {
+// 	case http.MethodGet:
+// 		getBook(w, r)
+// 	case http.MethodPut:
+// 		updateBook(w, r)
+// 	case http.MethodDelete:
+// 		deleteBook(w, r)
+// 	default:
+// 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+// 	}
+// }
 
-func addBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-type", "application/json")
+// func getBooks(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Add("Content-type", "application/json")
 
-	body, _ := ioutil.ReadAll(r.Body)
+// 	json.NewEncoder(w).Encode(books)
+// }
 
-	var book Book
+// func addBook(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Add("Content-type", "application/json")
 
-	err := json.Unmarshal(body, &book)
-	if err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
+// 	body, _ := ioutil.ReadAll(r.Body)
 
-	book.ID = len(books) + 1
+// 	var book Book
 
-	newBook := Book{
-		ID:     book.ID,
-		Title:  book.Title,
-		Author: book.Author,
-		Desc:   book.Desc,
-	}
-	books = append(books, newBook)
+// 	err := json.Unmarshal(body, &book)
+// 	if err != nil {
+// 		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+// 		return
+// 	}
 
-	json.NewEncoder(w).Encode("Created")
-}
+// 	book.ID = len(books) + 1
 
-func getBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-type", "application/json")
+// 	newBook := Book{
+// 		ID:     book.ID,
+// 		Title:  book.Title,
+// 		Author: book.Author,
+// 		Desc:   book.Desc,
+// 	}
+// 	books = append(books, newBook)
 
-	params := strings.TrimPrefix(r.URL.Path, "/books/")
-	bookID, _ := strconv.Atoi(params)
+// 	json.NewEncoder(w).Encode("Created")
+// }
 
-	var isBookExist bool
-	for _, book := range books {
-		if book.ID == bookID {
-			isBookExist = true
-		}
-	}
-	if !isBookExist {
-		http.Error(w, "Book not found", http.StatusBadRequest)
-		return
-	}
+// func getBook(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Add("Content-type", "application/json")
 
-	json.NewEncoder(w).Encode(books[bookID-1])
-}
+// 	params := strings.TrimPrefix(r.URL.Path, "/books/")
+// 	bookID, _ := strconv.Atoi(params)
 
-func updateBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-type", "application/json")
+// 	var isBookExist bool
+// 	for _, book := range books {
+// 		if book.ID == bookID {
+// 			isBookExist = true
+// 		}
+// 	}
+// 	if !isBookExist {
+// 		http.Error(w, "Book not found", http.StatusBadRequest)
+// 		return
+// 	}
 
-	params := strings.TrimPrefix(r.URL.Path, "/books/")
-	bookID, _ := strconv.Atoi(params)
+// 	json.NewEncoder(w).Encode(books[bookID-1])
+// }
 
-	var isBookExist bool
-	for _, book := range books {
-		if book.ID == bookID {
-			isBookExist = true
-		}
-	}
-	if !isBookExist {
-		http.Error(w, "Book not found", http.StatusBadRequest)
-		return
-	}
+// func updateBook(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Add("Content-type", "application/json")
 
-	body, _ := ioutil.ReadAll(r.Body)
+// 	params := strings.TrimPrefix(r.URL.Path, "/books/")
+// 	bookID, _ := strconv.Atoi(params)
 
-	var book Book
+// 	var isBookExist bool
+// 	for _, book := range books {
+// 		if book.ID == bookID {
+// 			isBookExist = true
+// 		}
+// 	}
+// 	if !isBookExist {
+// 		http.Error(w, "Book not found", http.StatusBadRequest)
+// 		return
+// 	}
 
-	err := json.Unmarshal(body, &book)
-	if err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
+// 	body, _ := ioutil.ReadAll(r.Body)
 
-	books[bookID-1].ID = bookID
-	books[bookID-1].Title = book.Title
-	books[bookID-1].Author = book.Author
-	books[bookID-1].Desc = book.Desc
+// 	var book Book
 
-	json.NewEncoder(w).Encode("Updated")
-}
+// 	err := json.Unmarshal(body, &book)
+// 	if err != nil {
+// 		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+// 		return
+// 	}
 
-func deleteBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-type", "application/json")
+// 	books[bookID-1].ID = bookID
+// 	books[bookID-1].Title = book.Title
+// 	books[bookID-1].Author = book.Author
+// 	books[bookID-1].Desc = book.Desc
 
-	params := strings.TrimPrefix(r.URL.Path, "/books/")
-	bookID, _ := strconv.Atoi(params)
+// 	json.NewEncoder(w).Encode("Updated")
+// }
 
-	var isBookExist bool
-	for _, book := range books {
-		if book.ID == bookID {
-			isBookExist = true
-		}
-	}
-	if !isBookExist {
-		http.Error(w, "Book not found", http.StatusBadRequest)
-		return
-	}
+// func deleteBook(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Add("Content-type", "application/json")
 
-	for i, book := range books {
-		if book.ID == bookID {
-			books = append(books[:i], books[i+1:]...)
-		}
-	}
-	json.NewEncoder(w).Encode("Deleted")
+// 	params := strings.TrimPrefix(r.URL.Path, "/books/")
+// 	bookID, _ := strconv.Atoi(params)
 
-}
+// 	var isBookExist bool
+// 	for _, book := range books {
+// 		if book.ID == bookID {
+// 			isBookExist = true
+// 		}
+// 	}
+// 	if !isBookExist {
+// 		http.Error(w, "Book not found", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	for i, book := range books {
+// 		if book.ID == bookID {
+// 			books = append(books[:i], books[i+1:]...)
+// 		}
+// 	}
+// 	json.NewEncoder(w).Encode("Deleted")
+
+// }
