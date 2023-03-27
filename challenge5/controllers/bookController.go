@@ -20,7 +20,6 @@ func CreateBook(ctx *gin.Context) {
 
 	models.Books = append(models.Books, newBook)
 
-	// ctx.JSON(http.StatusCreated, newBook)
 	ctx.JSON(http.StatusCreated, "Created")
 }
 
