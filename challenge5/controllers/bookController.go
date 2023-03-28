@@ -86,8 +86,9 @@ func GetBook(ctx *gin.Context) {
 
 }
 
-func GetAllBook(ctx *gin.Context) {
-	ctx.JSON(http.StatusCreated, models.Books)
+func (r *bookController) GetAllBook(ctx *gin.Context) {
+	books := r.repository.GetBooks()
+	ctx.JSON(http.StatusOK, books)
 }
 
 func DeleteBook(ctx *gin.Context) {

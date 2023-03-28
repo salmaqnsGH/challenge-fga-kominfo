@@ -7,6 +7,7 @@ import (
 
 type Repository interface {
 	CreateBook(book models.Book) models.Book
+	GetBooks() []models.Book
 }
 
 type repository struct {
@@ -30,4 +31,28 @@ func (r *repository) CreateBook(book models.Book) models.Book {
 	}
 
 	return book
+}
+
+func (r *repository) GetBooks() []models.Book {
+	books := []models.Book{}
+
+	query := "SELECT * FROM items"
+
+	rows, err := r.db.Query(query)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		book := models.Book{}
+
+		err = rows.Scan(&book.ID, &book.Title, &book.Author, &book.Desc)
+		if err != nil {
+			panic(err)
+		}
+
+		books = append(books, book)
+	}
+	return books
 }

@@ -11,14 +11,14 @@ import (
 func StartServer(db *sql.DB) *gin.Engine {
 	router := gin.Default()
 
-	activityRepository := repositories.NewRepository(db)
-	activityController := controller.NewBookController(activityRepository)
+	bookRepository := repositories.NewRepository(db)
+	bookController := controller.NewBookController(bookRepository)
 
-	router.POST("/books", activityController.CreateBook)
+	router.POST("/books", bookController.CreateBook)
 	router.PUT("/books/:bookID", controller.UpdateBook)
 	router.GET("/books/:bookID", controller.GetBook)
 	router.DELETE("/books/:bookID", controller.DeleteBook)
-	router.GET("/books", controller.GetAllBook)
+	router.GET("/books", bookController.GetAllBook)
 
 	return router
 }

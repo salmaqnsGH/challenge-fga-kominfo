@@ -41,36 +41,10 @@ func main() {
 
 	router.StartServer(db).Run(PORT)
 
-	// GetBooks()
 	// UpdateBook()
 	// DeleteBook()
 	// GetBooks()
 }
-
-// func GetBooks() {
-// 	books := []Book{}
-
-// 	query := "SELECT * FROM items"
-
-// 	rows, err := db.Query(query)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	defer rows.Close()
-
-// 	for rows.Next() {
-// 		book := Book{}
-
-// 		err = rows.Scan(&book.ID, &book.Title, &book.Author, &book.Desc)
-// 		if err != nil {
-// 			panic(err)
-// 		}
-
-// 		books = append(books, book)
-// 	}
-// 	fmt.Println(books)
-// 	fmt.Println("Successfully get all book")
-// }
 
 // func UpdateBook() {
 // 	query := `
