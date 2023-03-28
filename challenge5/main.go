@@ -70,27 +70,3 @@ func main() {
 
 // 	fmt.Println("Successfully updated book", count)
 // }
-
-// func DeleteBook() {
-// 	query := `
-// 		DELETE FROM items
-// 		WHERE id=$1
-// 	`
-
-// 	res, err := db.Exec(query, 7)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	count, err := res.RowsAffected()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	if count == 0 {
-// 		fmt.Println("Data Not Found", count)
-// 		return
-// 	}
-
-// 	fmt.Println("Successfully deleted book", count)
-// }

@@ -91,29 +91,19 @@ func (r *bookController) GetAllBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, books)
 }
 
-func DeleteBook(ctx *gin.Context) {
+func (r *bookController) DeleteBook(ctx *gin.Context) {
 	bookID := ctx.Param("bookID")
 	bookIDInt, err := strconv.Atoi(bookID)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	bookIndexToDelete := -1
-	for i, book := range models.Books {
-		if book.ID == bookIDInt {
-			bookIndexToDelete = i
-			break
-		}
-	}
+	affectedRow := r.repository.DeleteBook(bookIDInt)
 
-	copy(models.Books[bookIndexToDelete:], models.Books[bookIndexToDelete+1:])
-	models.Books[len(models.Books)-1] = models.Book{}
-	models.Books = models.Books[:len(models.Books)-1]
-
-	if bookIndexToDelete < 0 {
+	if affectedRow == 0 {
 		ctx.JSON(http.StatusCreated, "ID not found")
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, "Deleted")
+	ctx.JSON(http.StatusOK, "Deleted")
 }
