@@ -28,7 +28,7 @@ func (r *bookController) CreateBook(ctx *gin.Context) {
 	r.repository.CreateBook(newBook)
 
 	// ctx.JSON(http.StatusOK, book)
-	ctx.JSON(http.StatusOK, "Created")
+	ctx.JSON(http.StatusCreated, "Created")
 }
 
 func UpdateBook(ctx *gin.Context) {
