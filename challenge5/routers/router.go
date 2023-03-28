@@ -15,7 +15,7 @@ func StartServer(db *sql.DB) *gin.Engine {
 	bookController := controller.NewBookController(bookRepository)
 
 	router.POST("/books", bookController.CreateBook)
-	router.PUT("/books/:bookID", controller.UpdateBook)
+	router.PUT("/books/:bookID", bookController.UpdateBook)
 	router.GET("/books/:bookID", controller.GetBook)
 	router.DELETE("/books/:bookID", bookController.DeleteBook)
 	router.GET("/books", bookController.GetAllBook)

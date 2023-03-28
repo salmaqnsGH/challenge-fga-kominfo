@@ -9,6 +9,7 @@ type Repository interface {
 	CreateBook(book models.Book) models.Book
 	GetBooks() []models.Book
 	DeleteBook(id int) int
+	UpdateBook(book models.Book) (int, models.Book)
 }
 
 type repository struct {
@@ -75,4 +76,24 @@ func (r *repository) DeleteBook(id int) int {
 	}
 
 	return int(count)
+}
+
+func (r *repository) UpdateBook(book models.Book) (int, models.Book) {
+	query := `
+		UPDATE items
+		SET title=$2, author=$3, description=$4
+		WHERE id=$1
+	`
+
+	res, err := r.db.Exec(query, book.ID, book.Title, book.Author, book.Desc)
+	if err != nil {
+		panic(err)
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count), book
 }
