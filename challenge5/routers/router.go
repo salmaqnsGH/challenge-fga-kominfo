@@ -2,18 +2,23 @@ package router
 
 import (
 	controller "belajar-gin/controllers"
+	"belajar-gin/repositories"
+	"database/sql"
 
 	"github.com/gin-gonic/gin"
 )
 
-func StartServer() *gin.Engine {
-	r := gin.Default()
+func StartServer(db *sql.DB) *gin.Engine {
+	router := gin.Default()
 
-	r.POST("/books", controller.CreateBook)
-	r.PUT("/books/:bookID", controller.UpdateBook)
-	r.GET("/books/:bookID", controller.GetBook)
-	r.DELETE("/books/:bookID", controller.DeleteBook)
-	r.GET("/books", controller.GetAllBook)
+	activityRepository := repositories.NewRepository(db)
+	activityController := controller.NewBookController(activityRepository)
 
-	return r
+	router.POST("/books", activityController.CreateBook)
+	router.PUT("/books/:bookID", controller.UpdateBook)
+	router.GET("/books/:bookID", controller.GetBook)
+	router.DELETE("/books/:bookID", controller.DeleteBook)
+	router.GET("/books", controller.GetAllBook)
+
+	return router
 }

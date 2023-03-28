@@ -2,13 +2,22 @@ package controller
 
 import (
 	"belajar-gin/models"
+	"belajar-gin/repositories"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CreateBook(ctx *gin.Context) {
+type bookController struct {
+	repository repositories.Repository
+}
+
+func NewBookController(repository repositories.Repository) *bookController {
+	return &bookController{repository}
+}
+
+func (r *bookController) CreateBook(ctx *gin.Context) {
 	var newBook models.Book
 
 	err := ctx.ShouldBindJSON(&newBook)
@@ -16,11 +25,10 @@ func CreateBook(ctx *gin.Context) {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	newBook.ID = len(models.Books) + 1
+	r.repository.CreateBook(newBook)
 
-	models.Books = append(models.Books, newBook)
-
-	ctx.JSON(http.StatusCreated, "Created")
+	// ctx.JSON(http.StatusOK, book)
+	ctx.JSON(http.StatusOK, "Created")
 }
 
 func UpdateBook(ctx *gin.Context) {
