@@ -2,8 +2,6 @@ package controller
 
 import (
 	"belajar-gin/models"
-	"belajar-gin/services/book"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -16,16 +14,11 @@ func CreateBook(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&newBook)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
 	}
 
-	result, err := book.CreateBook(newBook)
-	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+	newBook.ID = len(models.Books) + 1
 
-	fmt.Println(result)
+	models.Books = append(models.Books, newBook)
 
 	ctx.JSON(http.StatusCreated, "Created")
 }
@@ -36,13 +29,11 @@ func UpdateBook(ctx *gin.Context) {
 	bookIDInt, err := strconv.Atoi(bookID)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
 	}
 
 	err = ctx.ShouldBindJSON(&updatedBook)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
 	}
 
 	isBookFound := false
@@ -69,7 +60,6 @@ func GetBook(ctx *gin.Context) {
 	bookIDInt, err := strconv.Atoi(bookID)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
 	}
 
 	isBookFound := false
@@ -85,6 +75,7 @@ func GetBook(ctx *gin.Context) {
 		ctx.JSON(http.StatusCreated, b)
 		return
 	}
+
 }
 
 func GetAllBook(ctx *gin.Context) {
@@ -96,7 +87,6 @@ func DeleteBook(ctx *gin.Context) {
 	bookIDInt, err := strconv.Atoi(bookID)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
 	}
 
 	bookIndexToDelete := -1
