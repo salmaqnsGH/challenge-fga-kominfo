@@ -44,14 +44,14 @@ func (r *bookController) UpdateBook(ctx *gin.Context) {
 	}
 
 	bookInput.ID = bookIDInt
-	affectedRow, book := r.repository.UpdateBook(bookInput)
+	affectedRow, _ := r.repository.UpdateBook(bookInput)
 
 	if affectedRow == 0 {
 		ctx.JSON(http.StatusCreated, "ID not found")
 		return
 	}
 
-	ctx.JSON(http.StatusOK, book)
+	ctx.JSON(http.StatusOK, "Updated")
 }
 
 func (r *bookController) GetBook(ctx *gin.Context) {
