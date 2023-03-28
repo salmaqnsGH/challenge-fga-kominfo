@@ -54,28 +54,20 @@ func (r *bookController) UpdateBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, book)
 }
 
-func GetBook(ctx *gin.Context) {
-	var b models.Book
+func (r *bookController) GetBook(ctx *gin.Context) {
 	bookID := ctx.Param("bookID")
 	bookIDInt, err := strconv.Atoi(bookID)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	isBookFound := false
-	for _, book := range models.Books {
-		if book.ID == bookIDInt {
-			isBookFound = true
-			b = book
-			break
-		}
-	}
-
-	if isBookFound {
-		ctx.JSON(http.StatusCreated, b)
+	book, err := r.repository.GetBookByID(bookIDInt)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, "ID not found")
 		return
 	}
 
+	ctx.JSON(http.StatusOK, book)
 }
 
 func (r *bookController) GetAllBook(ctx *gin.Context) {

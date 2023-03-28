@@ -10,6 +10,7 @@ type Repository interface {
 	GetBooks() []models.Book
 	DeleteBook(id int) int
 	UpdateBook(book models.Book) (int, models.Book)
+	GetBookByID(id int) (models.Book, error)
 }
 
 type repository struct {
@@ -96,4 +97,17 @@ func (r *repository) UpdateBook(book models.Book) (int, models.Book) {
 	}
 
 	return int(count), book
+}
+
+func (r *repository) GetBookByID(id int) (models.Book, error) {
+	book := models.Book{}
+
+	query := "SELECT * FROM items WHERE id = $1"
+
+	err := r.db.QueryRow(query, id).Scan(&book.ID, &book.Title, &book.Author, &book.Desc)
+	if err != nil {
+		return book, err
+	}
+
+	return book, nil
 }

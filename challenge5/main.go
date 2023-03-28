@@ -40,33 +40,4 @@ func main() {
 	fmt.Println("Successfully connected to database!")
 
 	router.StartServer(db).Run(PORT)
-
-	// UpdateBook()
-	// DeleteBook()
-	// GetBooks()
 }
-
-// func UpdateBook() {
-// 	query := `
-// 		UPDATE items
-// 		SET title=$2, author=$3, description=$4
-// 		WHERE id=$1
-// 	`
-
-// 	res, err := db.Exec(query, 1, "Rich Dad Poor Dad", "Robert Kiyosaki", "financial book")
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	count, err := res.RowsAffected()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	if count == 0 {
-// 		fmt.Println("Data Not Found", count)
-// 		return
-// 	}
-
-// 	fmt.Println("Successfully updated book", count)
-// }
