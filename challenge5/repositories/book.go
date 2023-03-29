@@ -12,7 +12,7 @@ type Repository interface {
 	// GetBooks() []models.Book
 	// DeleteBook(id int) int
 	// UpdateBook(book models.Book) (int, models.Book)
-	// GetBookByID(id int) (models.Book, error)
+	GetBookByID(id int) (models.Book, error)
 }
 
 type repository struct {
@@ -31,6 +31,15 @@ func (r *repository) Create(book models.Book) models.Book {
 	}
 	fmt.Println(book)
 	return book
+}
+
+func (r *repository) GetBookByID(id int) (models.Book, error) {
+	var book models.Book
+	if err := r.db.Where("id = ?", id).First(&book).Error; err != nil {
+		return book, err
+	}
+
+	return book, nil
 }
 
 // func (r *repository) GetBooks() []models.Book {
@@ -94,17 +103,4 @@ func (r *repository) Create(book models.Book) models.Book {
 // 	}
 
 // 	return int(count), book
-// }
-
-// func (r *repository) GetBookByID(id int) (models.Book, error) {
-// 	book := models.Book{}
-
-// 	query := "SELECT * FROM items WHERE id = $1"
-
-// 	err := r.db.QueryRow(query, id).Scan(&book.ID, &book.Title, &book.Author, &book.Desc)
-// 	if err != nil {
-// 		return book, err
-// 	}
-
-// 	return book, nil
 // }

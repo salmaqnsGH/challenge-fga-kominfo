@@ -8,6 +8,7 @@ import (
 
 type Service interface {
 	CreateBook(input models.BookInput) models.Book
+	GetBookyID(id int) (models.Book, error)
 }
 
 type service struct {
@@ -27,4 +28,13 @@ func (s *service) CreateBook(input models.BookInput) models.Book {
 	fmt.Println("newBook", newBook)
 
 	return newBook
+}
+
+func (s *service) GetBookyID(id int) (models.Book, error) {
+	book, err := s.repository.GetBookByID(id)
+	if err != nil {
+		return book, err
+	}
+
+	return book, nil
 }
