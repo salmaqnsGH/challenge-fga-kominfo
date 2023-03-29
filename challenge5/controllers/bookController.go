@@ -45,7 +45,7 @@ func (c *bookController) GetBook(ctx *gin.Context) {
 
 	book, err := c.service.GetBookyID(bookIDInt)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "ID not found"})
 		return
 	}
 
@@ -63,7 +63,7 @@ func (c *bookController) UpdateBook(ctx *gin.Context) {
 
 	_, err = c.service.GetBookyID(bookIDInt)
 	if err != nil {
-		ctx.JSON(http.StatusOK, "ID not found")
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "ID not found"})
 		return
 	}
 
@@ -75,7 +75,7 @@ func (c *bookController) UpdateBook(ctx *gin.Context) {
 
 	updatedBook, err := c.service.UpdateBook(bookIDInt, bookInput)
 	if err != nil {
-		ctx.JSON(http.StatusOK, "ID not found")
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "ID not found"})
 		return
 	}
 
@@ -101,9 +101,9 @@ func (c *bookController) DeleteBook(ctx *gin.Context) {
 
 	err = c.service.DeleteBook(bookIDInt)
 	if err != nil {
-		ctx.JSON(http.StatusCreated, gin.H{"message": "ID not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "ID not found"})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Book Deleted Succesfully"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "Book deleted succesfully"})
 }
