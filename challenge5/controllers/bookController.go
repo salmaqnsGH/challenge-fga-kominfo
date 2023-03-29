@@ -2,92 +2,96 @@ package controller
 
 import (
 	"belajar-gin/models"
-	"belajar-gin/repositories"
+	"belajar-gin/service"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type bookController struct {
-	repository repositories.Repository
+	service service.Service
 }
 
-func NewBookController(repository repositories.Repository) *bookController {
-	return &bookController{repository}
+func NewBookController(service service.Service) *bookController {
+	return &bookController{service}
 }
 
-func (r *bookController) CreateBook(ctx *gin.Context) {
-	var newBook models.Book
+func (h *bookController) CreateBook(ctx *gin.Context) {
+	var input models.BookInput
 
-	err := ctx.ShouldBindJSON(&newBook)
+	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
-	}
-
-	r.repository.CreateBook(newBook)
-
-	ctx.JSON(http.StatusCreated, "Created")
-}
-
-func (r *bookController) UpdateBook(ctx *gin.Context) {
-	var bookInput models.Book
-	bookID := ctx.Param("bookID")
-	bookIDInt, err := strconv.Atoi(bookID)
-	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-	}
-
-	err = ctx.ShouldBindJSON(&bookInput)
-	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-	}
-
-	bookInput.ID = bookIDInt
-	affectedRow, _ := r.repository.UpdateBook(bookInput)
-
-	if affectedRow == 0 {
-		ctx.JSON(http.StatusCreated, "ID not found")
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "Updated")
-}
-
-func (r *bookController) GetBook(ctx *gin.Context) {
-	bookID := ctx.Param("bookID")
-	bookIDInt, err := strconv.Atoi(bookID)
+	newBook := h.service.CreateBook(input)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
-	}
-
-	book, err := r.repository.GetBookByID(bookIDInt)
-	if err != nil {
-		ctx.JSON(http.StatusNotFound, "ID not found")
 		return
 	}
 
-	ctx.JSON(http.StatusOK, book)
+	ctx.JSON(http.StatusCreated, newBook)
 }
 
-func (r *bookController) GetAllBook(ctx *gin.Context) {
-	books := r.repository.GetBooks()
-	ctx.JSON(http.StatusOK, books)
-}
+// func (r *bookController) UpdateBook(ctx *gin.Context) {
+// 	var bookInput models.Book
+// 	bookID := ctx.Param("bookID")
+// 	bookIDInt, err := strconv.Atoi(bookID)
+// 	if err != nil {
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 	}
 
-func (r *bookController) DeleteBook(ctx *gin.Context) {
-	bookID := ctx.Param("bookID")
-	bookIDInt, err := strconv.Atoi(bookID)
-	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-	}
+// 	err = ctx.ShouldBindJSON(&bookInput)
+// 	if err != nil {
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 	}
 
-	affectedRow := r.repository.DeleteBook(bookIDInt)
+// 	bookInput.ID = bookIDInt
+// 	affectedRow, _ := r.repository.UpdateBook(bookInput)
 
-	if affectedRow == 0 {
-		ctx.JSON(http.StatusCreated, "ID not found")
-		return
-	}
+// 	if affectedRow == 0 {
+// 		ctx.JSON(http.StatusCreated, "ID not found")
+// 		return
+// 	}
 
-	ctx.JSON(http.StatusOK, "Deleted")
-}
+// 	ctx.JSON(http.StatusOK, "Updated")
+// }
+
+// func (r *bookController) GetBook(ctx *gin.Context) {
+// 	bookID := ctx.Param("bookID")
+// 	bookIDInt, err := strconv.Atoi(bookID)
+// 	if err != nil {
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 	}
+
+// 	book, err := r.repository.GetBookByID(bookIDInt)
+// 	if err != nil {
+// 		ctx.JSON(http.StatusNotFound, "ID not found")
+// 		return
+// 	}
+
+// 	ctx.JSON(http.StatusOK, book)
+// }
+
+// func (r *bookController) GetAllBook(ctx *gin.Context) {
+// 	books := r.repository.GetBooks()
+// 	ctx.JSON(http.StatusOK, books)
+// }
+
+// func (r *bookController) DeleteBook(ctx *gin.Context) {
+// 	bookID := ctx.Param("bookID")
+// 	bookIDInt, err := strconv.Atoi(bookID)
+// 	if err != nil {
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 	}
+
+// 	affectedRow := r.repository.DeleteBook(bookIDInt)
+
+// 	if affectedRow == 0 {
+// 		ctx.JSON(http.StatusCreated, "ID not found")
+// 		return
+// 	}
+
+// 	ctx.JSON(http.StatusOK, "Deleted")
+// }
