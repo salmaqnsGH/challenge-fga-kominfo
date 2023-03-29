@@ -12,6 +12,7 @@ type Service interface {
 	GetBookyID(id int) (models.Book, error)
 	UpdateBook(id int, inputData models.BookInput) (models.Book, error)
 	GetBooks() ([]models.Book, error)
+	DeleteBook(id int) error
 }
 
 type service struct {
@@ -68,4 +69,13 @@ func (s *service) GetBooks() ([]models.Book, error) {
 	}
 
 	return books, nil
+}
+
+func (s *service) DeleteBook(id int) error {
+	err := s.repository.DeleteBook(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

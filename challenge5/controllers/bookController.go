@@ -17,7 +17,7 @@ func NewBookController(service service.Service) *bookController {
 	return &bookController{service}
 }
 
-func (h *bookController) CreateBook(ctx *gin.Context) {
+func (c *bookController) CreateBook(ctx *gin.Context) {
 	var input models.BookInput
 
 	err := ctx.ShouldBindJSON(&input)
@@ -26,7 +26,7 @@ func (h *bookController) CreateBook(ctx *gin.Context) {
 		return
 	}
 
-	newBook := h.service.CreateBook(input)
+	newBook := c.service.CreateBook(input)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -35,7 +35,7 @@ func (h *bookController) CreateBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, newBook)
 }
 
-func (h *bookController) GetBook(ctx *gin.Context) {
+func (c *bookController) GetBook(ctx *gin.Context) {
 	bookID := ctx.Param("bookID")
 	bookIDInt, err := strconv.Atoi(bookID)
 	if err != nil {
@@ -43,7 +43,7 @@ func (h *bookController) GetBook(ctx *gin.Context) {
 		return
 	}
 
-	book, err := h.service.GetBookyID(bookIDInt)
+	book, err := c.service.GetBookyID(bookIDInt)
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -52,7 +52,7 @@ func (h *bookController) GetBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, book)
 }
 
-func (h *bookController) UpdateBook(ctx *gin.Context) {
+func (c *bookController) UpdateBook(ctx *gin.Context) {
 	var bookInput models.BookInput
 	bookID := ctx.Param("bookID")
 	bookIDInt, err := strconv.Atoi(bookID)
@@ -61,7 +61,7 @@ func (h *bookController) UpdateBook(ctx *gin.Context) {
 		return
 	}
 
-	_, err = h.service.GetBookyID(bookIDInt)
+	_, err = c.service.GetBookyID(bookIDInt)
 	if err != nil {
 		ctx.JSON(http.StatusOK, "ID not found")
 		return
@@ -73,7 +73,7 @@ func (h *bookController) UpdateBook(ctx *gin.Context) {
 		return
 	}
 
-	updatedBook, err := h.service.UpdateBook(bookIDInt, bookInput)
+	updatedBook, err := c.service.UpdateBook(bookIDInt, bookInput)
 	if err != nil {
 		ctx.JSON(http.StatusOK, "ID not found")
 		return
@@ -82,8 +82,8 @@ func (h *bookController) UpdateBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, updatedBook)
 }
 
-func (h *bookController) GetAllBook(ctx *gin.Context) {
-	books, err := h.service.GetBooks()
+func (c *bookController) GetAllBook(ctx *gin.Context) {
+	books, err := c.service.GetBooks()
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -92,19 +92,18 @@ func (h *bookController) GetAllBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, books)
 }
 
-// func (r *bookController) DeleteBook(ctx *gin.Context) {
-// 	bookID := ctx.Param("bookID")
-// 	bookIDInt, err := strconv.Atoi(bookID)
-// 	if err != nil {
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 	}
+func (c *bookController) DeleteBook(ctx *gin.Context) {
+	bookID := ctx.Param("bookID")
+	bookIDInt, err := strconv.Atoi(bookID)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+	}
 
-// 	affectedRow := r.repository.DeleteBook(bookIDInt)
+	err = c.service.DeleteBook(bookIDInt)
+	if err != nil {
+		ctx.JSON(http.StatusCreated, gin.H{"message": "ID not found"})
+		return
+	}
 
-// 	if affectedRow == 0 {
-// 		ctx.JSON(http.StatusCreated, "ID not found")
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, "Deleted")
-// }
+	ctx.JSON(http.StatusOK, gin.H{"message": "Book Deleted Succesfully"})
+}

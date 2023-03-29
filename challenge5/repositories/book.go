@@ -10,7 +10,7 @@ import (
 type Repository interface {
 	Create(book models.Book) models.Book
 	GetBooks() ([]models.Book, error)
-	// DeleteBook(id int) int
+	DeleteBook(id int) error
 	UpdateBook(book models.Book) (models.Book, error)
 	GetBookByID(id int) (models.Book, error)
 }
@@ -64,21 +64,11 @@ func (r *repository) GetBooks() ([]models.Book, error) {
 	return books, nil
 }
 
-// func (r *repository) DeleteBook(id int) int {
-// 	query := `
-// 		DELETE FROM items
-// 		WHERE id=$1
-// 	`
+func (r *repository) DeleteBook(id int) error {
+	var book models.Book
+	if err := r.db.Where("id = ?", id).First(&book).Delete(&book).Error; err != nil {
+		return err
+	}
 
-// 	res, err := r.db.Exec(query, id)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	count, err := res.RowsAffected()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	return int(count)
-// }
+	return nil
+}
