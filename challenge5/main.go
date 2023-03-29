@@ -16,7 +16,7 @@ const (
 	DB_PASSWORD = "secret"
 	DB_PORT     = 5432
 	DB_NAME     = "tests"
-	PORT        = ":4000"
+	PORT        = ":8080"
 )
 
 func main() {
