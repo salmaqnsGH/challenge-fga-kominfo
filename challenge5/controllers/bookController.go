@@ -52,29 +52,35 @@ func (h *bookController) GetBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, book)
 }
 
-// func (r *bookController) UpdateBook(ctx *gin.Context) {
-// 	var bookInput models.Book
-// 	bookID := ctx.Param("bookID")
-// 	bookIDInt, err := strconv.Atoi(bookID)
-// 	if err != nil {
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 	}
+func (h *bookController) UpdateBook(ctx *gin.Context) {
+	var bookInput models.BookInput
+	bookID := ctx.Param("bookID")
+	bookIDInt, err := strconv.Atoi(bookID)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
 
-// 	err = ctx.ShouldBindJSON(&bookInput)
-// 	if err != nil {
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 	}
+	_, err = h.service.GetBookyID(bookIDInt)
+	if err != nil {
+		ctx.JSON(http.StatusOK, "ID not found")
+		return
+	}
 
-// 	bookInput.ID = bookIDInt
-// 	affectedRow, _ := r.repository.UpdateBook(bookInput)
+	err = ctx.ShouldBindJSON(&bookInput)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
 
-// 	if affectedRow == 0 {
-// 		ctx.JSON(http.StatusCreated, "ID not found")
-// 		return
-// 	}
+	updatedBook, err := h.service.UpdateBook(bookIDInt, bookInput)
+	if err != nil {
+		ctx.JSON(http.StatusOK, "ID not found")
+		return
+	}
 
-// 	ctx.JSON(http.StatusOK, "Updated")
-// }
+	ctx.JSON(http.StatusOK, updatedBook)
+}
 
 // func (r *bookController) GetAllBook(ctx *gin.Context) {
 // 	books := r.repository.GetBooks()

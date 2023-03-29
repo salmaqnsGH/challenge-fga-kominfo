@@ -11,7 +11,7 @@ type Repository interface {
 	Create(book models.Book) models.Book
 	// GetBooks() []models.Book
 	// DeleteBook(id int) int
-	// UpdateBook(book models.Book) (int, models.Book)
+	UpdateBook(book models.Book) (models.Book, error)
 	GetBookByID(id int) (models.Book, error)
 }
 
@@ -36,6 +36,16 @@ func (r *repository) Create(book models.Book) models.Book {
 func (r *repository) GetBookByID(id int) (models.Book, error) {
 	var book models.Book
 	if err := r.db.Where("id = ?", id).First(&book).Error; err != nil {
+		return book, err
+	}
+
+	return book, nil
+}
+
+func (r *repository) UpdateBook(book models.Book) (models.Book, error) {
+	err := r.db.Save(&book).Error
+
+	if err != nil {
 		return book, err
 	}
 
@@ -83,24 +93,4 @@ func (r *repository) GetBookByID(id int) (models.Book, error) {
 // 	}
 
 // 	return int(count)
-// }
-
-// func (r *repository) UpdateBook(book models.Book) (int, models.Book) {
-// 	query := `
-// 		UPDATE items
-// 		SET title=$2, author=$3, description=$4
-// 		WHERE id=$1
-// 	`
-
-// 	res, err := r.db.Exec(query, book.ID, book.Title, book.Author, book.Desc)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	count, err := res.RowsAffected()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	return int(count), book
 // }

@@ -17,7 +17,7 @@ func StartServer(db *gorm.DB) *gin.Engine {
 	bookController := controller.NewBookController(bookService)
 
 	router.POST("/books", bookController.CreateBook)
-	// router.PUT("/books/:bookID", bookController.UpdateBook)
+	router.PUT("/books/:bookID", bookController.UpdateBook)
 	router.GET("/books/:bookID", bookController.GetBook)
 	// router.DELETE("/books/:bookID", bookController.DeleteBook)
 	// router.GET("/books", bookController.GetAllBook)

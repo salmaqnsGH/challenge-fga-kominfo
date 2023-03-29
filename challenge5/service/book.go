@@ -4,11 +4,13 @@ import (
 	"belajar-gin/models"
 	"belajar-gin/repositories"
 	"fmt"
+	"time"
 )
 
 type Service interface {
 	CreateBook(input models.BookInput) models.Book
 	GetBookyID(id int) (models.Book, error)
+	UpdateBook(id int, inputData models.BookInput) (models.Book, error)
 }
 
 type service struct {
@@ -37,4 +39,23 @@ func (s *service) GetBookyID(id int) (models.Book, error) {
 	}
 
 	return book, nil
+}
+
+func (s *service) UpdateBook(id int, inputData models.BookInput) (models.Book, error) {
+	book, err := s.repository.GetBookByID(id)
+	if err != nil {
+		return book, err
+	}
+
+	book.NameBook = inputData.NameBook
+	book.Author = inputData.Author
+	book.UpdatedAt = time.Now()
+	book.CreatedAt = time.Now()
+
+	updatedBook, err := s.repository.UpdateBook(book)
+	if err != nil {
+		return updatedBook, err
+	}
+
+	return updatedBook, nil
 }
