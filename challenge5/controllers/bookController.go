@@ -82,10 +82,15 @@ func (h *bookController) UpdateBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, updatedBook)
 }
 
-// func (r *bookController) GetAllBook(ctx *gin.Context) {
-// 	books := r.repository.GetBooks()
-// 	ctx.JSON(http.StatusOK, books)
-// }
+func (h *bookController) GetAllBook(ctx *gin.Context) {
+	books, err := h.service.GetBooks()
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, books)
+}
 
 // func (r *bookController) DeleteBook(ctx *gin.Context) {
 // 	bookID := ctx.Param("bookID")

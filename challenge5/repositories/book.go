@@ -9,7 +9,7 @@ import (
 
 type Repository interface {
 	Create(book models.Book) models.Book
-	// GetBooks() []models.Book
+	GetBooks() ([]models.Book, error)
 	// DeleteBook(id int) int
 	UpdateBook(book models.Book) (models.Book, error)
 	GetBookByID(id int) (models.Book, error)
@@ -52,29 +52,17 @@ func (r *repository) UpdateBook(book models.Book) (models.Book, error) {
 	return book, nil
 }
 
-// func (r *repository) GetBooks() []models.Book {
-// 	books := []models.Book{}
+func (r *repository) GetBooks() ([]models.Book, error) {
+	var books []models.Book
 
-// 	query := "SELECT * FROM items"
+	err := r.db.Find(&books).Error
 
-// 	rows, err := r.db.Query(query)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	defer rows.Close()
+	if err != nil {
+		return books, err
+	}
 
-// 	for rows.Next() {
-// 		book := models.Book{}
-
-// 		err = rows.Scan(&book.ID, &book.Title, &book.Author, &book.Desc)
-// 		if err != nil {
-// 			panic(err)
-// 		}
-
-// 		books = append(books, book)
-// 	}
-// 	return books
-// }
+	return books, nil
+}
 
 // func (r *repository) DeleteBook(id int) int {
 // 	query := `

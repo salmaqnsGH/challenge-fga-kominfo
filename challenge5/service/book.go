@@ -11,6 +11,7 @@ type Service interface {
 	CreateBook(input models.BookInput) models.Book
 	GetBookyID(id int) (models.Book, error)
 	UpdateBook(id int, inputData models.BookInput) (models.Book, error)
+	GetBooks() ([]models.Book, error)
 }
 
 type service struct {
@@ -58,4 +59,13 @@ func (s *service) UpdateBook(id int, inputData models.BookInput) (models.Book, e
 	}
 
 	return updatedBook, nil
+}
+
+func (s *service) GetBooks() ([]models.Book, error) {
+	books, err := s.repository.GetBooks()
+	if err != nil {
+		return books, err
+	}
+
+	return books, nil
 }
