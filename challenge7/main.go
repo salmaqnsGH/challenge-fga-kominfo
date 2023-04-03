@@ -23,15 +23,6 @@ type WaterWind struct {
 	Wind  int `json:"wind"`
 }
 
-// ●Jika water dibawah 5 maka status aman
-// ●jika water antara 6 - 8 maka status siaga
-// ●jika water diatas 8 maka status bahaya
-// ●jika wind dibawah 6 maka status aman
-// ●jika wind antara 7 - 15 maka status siaga
-// ●jika wind diatas 15 maka status bahaya
-// ●value water dalam satuan meter
-// ●value wind dalam satuan meter per detik
-
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
@@ -46,10 +37,11 @@ func main() {
 			Body:   "This is a test",
 		}
 
-		result := CreatePost(post)
-		fmt.Println(result)
+		CreatePost(post)
 
 		statusWaterWind(statusWater, statusWind)
+
+		fmt.Println()
 
 		time.Sleep(15 * time.Second)
 	}
@@ -90,17 +82,17 @@ func statusWaterWind(statusWater, statusWind int) {
 	fmt.Println(result)
 }
 
-func CreatePost(post Post) string {
+func CreatePost(post Post) {
 	requestJSON, err := json.Marshal(post)
 	if err != nil {
 		fmt.Println("Failed to marshal request data:", err)
-		return err.Error()
+		return
 	}
 
 	res, err := http.Post("https://jsonplaceholder.typicode.com/posts", "Application/json", bytes.NewBuffer(requestJSON))
 	if err != nil {
 		fmt.Println("Failed to initialize create post:", err)
-		return err.Error()
+		return
 	}
 
 	defer res.Body.Close()
@@ -108,10 +100,10 @@ func CreatePost(post Post) string {
 	bodyByte, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		fmt.Println("Failed to read response body:", err)
-		return err.Error()
+		return
 	}
 
 	result := fmt.Sprint("POST Request:", string(requestJSON), "\n", "Response:\n", string(bodyByte), "\n", "Response code:", res.Status)
 
-	return result
+	fmt.Println(result)
 }
