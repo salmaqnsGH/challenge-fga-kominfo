@@ -23,6 +23,7 @@ func New() *gin.Engine {
 		productRouter.PUT("/:productID", middlewares.AuthorizeUser(), middlewares.ProductAuthorization(), controllers.UpdateProduct)
 		productRouter.GET("/", controllers.GetProducts)
 		productRouter.GET("/:productID", middlewares.ProductAuthorization(), controllers.GetProductByID)
+		productRouter.DELETE("/:productID", middlewares.ProductAuthorization(), controllers.DeleteProductByID)
 	}
 
 	return r

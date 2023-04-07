@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"errors"
+	"fmt"
 	database "latihan-jwt/database"
 	"latihan-jwt/models"
 	"net/http"
@@ -92,4 +94,31 @@ func GetProductByID(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, product)
+}
+
+func DeleteProductByID(ctx *gin.Context) {
+	db := database.GetDB()
+	product := models.Product{}
+	productID, err := strconv.Atoi(ctx.Param("productID"))
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid product ID"))
+		return
+	}
+
+	err = db.Where("id = ?", productID).First(&product).Error
+	if err != nil {
+		ctx.AbortWithError(http.StatusNotFound, errors.New("Product not found"))
+
+		return
+	}
+	fmt.Println(product)
+	err = db.Where("id = ?", productID).First(&product).Delete(&product).Error
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Product deleted successfully",
+	})
 }
