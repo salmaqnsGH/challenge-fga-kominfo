@@ -13,6 +13,7 @@ import (
 func RegisterUser(ctx *gin.Context) {
 	db := database.GetDB()
 	user := models.User{}
+	user.Role = "user"
 
 	err := ctx.ShouldBindJSON(&user)
 	if err != nil {

@@ -12,6 +12,7 @@ type User struct {
 	FirstName string    `gorm:"not null" json:"first_name" validate:"required-First name is required"`
 	Email     string    `gorm:"not null;uniqueIndex" json:"email" validate:"required-Email is required"`
 	Password  string    `gorm:"not null" json:"password" validate:"required-Password is required,minstringlength(6)-Password has to have minimum 6 charracter"`
+	Role      string    `json:"role"`
 	Products  []Product `json:"products"`
 }
 

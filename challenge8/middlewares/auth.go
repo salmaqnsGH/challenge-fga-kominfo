@@ -63,3 +63,32 @@ func ProductAuthorization() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func AuthorizeUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := database.GetDB()
+		userData := c.MustGet("userData").(jwt.MapClaims)
+
+		userID := uint(userData["id"].(float64))
+		user := models.User{}
+
+		err := db.Select("role").First(&user, userID).Error
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"message": "Unauthorized",
+				"error":   "Failed to find product",
+			})
+			return
+		}
+
+		if user.Role != "admin" {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"message": "Forbidden",
+				"error":   "Access forbidden for this method",
+			})
+			return
+		}
+
+		c.Next()
+	}
+}

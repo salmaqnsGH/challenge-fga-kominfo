@@ -64,3 +64,18 @@ func UpdateProduct(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, product)
 }
+
+func GetProducts(ctx *gin.Context) {
+	db := database.GetDB()
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	products := []models.Product{}
+	userID := uint(userData["id"].(float64))
+
+	err := db.Where("user_id = ?", userID).Find(&products).Error
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, products)
+}
