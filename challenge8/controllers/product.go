@@ -79,3 +79,17 @@ func GetProducts(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, products)
 }
+
+func GetProductByID(ctx *gin.Context) {
+	db := database.GetDB()
+	product := models.Product{}
+	productID, _ := strconv.Atoi(ctx.Param("productID"))
+
+	err := db.Preload("User").Where("id = ?", productID).Find(&product).Error
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, product)
+}

@@ -22,6 +22,7 @@ func New() *gin.Engine {
 		productRouter.POST("/", controllers.CreateProduct)
 		productRouter.PUT("/:productID", middlewares.AuthorizeUser(), middlewares.ProductAuthorization(), controllers.UpdateProduct)
 		productRouter.GET("/", controllers.GetProducts)
+		productRouter.GET("/:productID", middlewares.ProductAuthorization(), controllers.GetProductByID)
 	}
 
 	return r
