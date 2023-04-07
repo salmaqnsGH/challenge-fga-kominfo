@@ -27,44 +27,148 @@ func Authentication() gin.HandlerFunc {
 	}
 }
 
-func ProductAuthorization() gin.HandlerFunc {
+func ProductAuthorizationPUT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := database.GetDB()
-		productID, err := strconv.Atoi(c.Param("productID"))
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"message": "Unauthorized",
-				"error":   "Invalid product ID data type",
-			})
-			return
-		}
-
 		userData := c.MustGet("userData").(jwt.MapClaims)
 		userID := uint(userData["id"].(float64))
 		product := models.Product{}
 
-		err = db.Select("user_id").First(&product, uint(productID)).Error
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"message": "Unauthorized",
-				"error":   "Failed to find product",
-			})
-			return
-		}
+		if !isAdmin(c, userID) {
+			productID, err := strconv.Atoi(c.Param("productID"))
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"message": "Unauthorized",
+					"error":   "Invalid product ID data type",
+				})
+				return
+			}
 
-		if product.UserID != userID {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"message": "Forbidden",
-				"error":   "You are not allowed to access this product",
-			})
-			return
+			err = db.Select("user_id").First(&product, uint(productID)).Error
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"message": "Unauthorized",
+					"error":   "Failed to find product",
+				})
+				return
+			}
+
+			if product.UserID != userID {
+				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+					"message": "Forbidden",
+					"error":   "You are not allowed to access this product",
+				})
+				return
+			}
 		}
 
 		c.Next()
 	}
 }
 
-func AuthorizeUser() gin.HandlerFunc {
+func ProductAuthorizationDELETE() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := database.GetDB()
+		userData := c.MustGet("userData").(jwt.MapClaims)
+		userID := uint(userData["id"].(float64))
+		product := models.Product{}
+
+		if !isAdmin(c, userID) {
+			productID, err := strconv.Atoi(c.Param("productID"))
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"message": "Unauthorized",
+					"error":   "Invalid product ID data type",
+				})
+				return
+			}
+
+			err = db.Select("user_id").First(&product, uint(productID)).Error
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"message": "Unauthorized",
+					"error":   "Failed to find product",
+				})
+				return
+			}
+
+			if product.UserID != userID {
+				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+					"message": "Forbidden",
+					"error":   "You are not allowed to access this product",
+				})
+				return
+			}
+		}
+
+		c.Next()
+	}
+}
+
+func ProductAuthorizationGET() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := database.GetDB()
+		userData := c.MustGet("userData").(jwt.MapClaims)
+		userID := uint(userData["id"].(float64))
+		product := models.Product{}
+
+		if !isAdmin(c, userID) {
+			productID, err := strconv.Atoi(c.Param("productID"))
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"message": "Unauthorized",
+					"error":   "Invalid product ID data type",
+				})
+				return
+			}
+
+			err = db.Select("user_id").First(&product, uint(productID)).Error
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"message": "Unauthorized",
+					"error":   "Failed to find product",
+				})
+				return
+			}
+
+			if product.UserID != userID {
+				c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+					"message": "Forbidden",
+					"error":   "You are not allowed to access this product",
+				})
+				return
+			}
+		}
+
+		c.Next()
+	}
+}
+
+func isAdmin(c *gin.Context, userID uint) bool {
+	db := database.GetDB()
+	user := models.User{}
+
+	err := db.Select("role").First(&user, userID).Error
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"message": "Unauthorized",
+			"error":   "Failed to find product",
+		})
+		return false
+	}
+
+	if user.Role != "admin" {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+			"message": "Forbidden",
+			"error":   "Access forbidden for this method",
+		})
+		return false
+	}
+
+	return true
+}
+
+func AuthorizeAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := database.GetDB()
 		userData := c.MustGet("userData").(jwt.MapClaims)
