@@ -13,9 +13,6 @@ import (
 func New(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
-	// 	productRouter.GET("/", controllers.GetProducts)
-	//
-
 	productRepository := repositories.NeProductRepository(db)
 	productService := services.NewProductService(productRepository)
 	productController := controllers.NewProducrController(productService)
@@ -32,7 +29,7 @@ func New(db *gorm.DB) *gin.Engine {
 			productRouter.Use(middlewares.Authentication())
 
 			productRouter.POST("/", productController.CreateProduct)
-			// productRouter.GET("/", controllers.GetProducts)
+			productRouter.GET("/", productController.GetProducts)
 			productRouter.DELETE("/:productID", middlewares.ProductAuthorizationDELETE(), productController.DeleteProductByID)
 			productRouter.PUT("/:productID", middlewares.ProductAuthorizationPUT(), productController.UpdateProduct)
 			productRouter.GET("/:productID", middlewares.ProductAuthorizationGET(), productController.GetProductByID)

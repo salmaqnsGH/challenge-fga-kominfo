@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	database "latihan-jwt/database"
 	"latihan-jwt/models"
 	"latihan-jwt/services"
 	"net/http"
@@ -76,15 +75,17 @@ func (c *productController) UpdateProduct(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, updatedProduct)
 }
 
-func GetProducts(ctx *gin.Context) {
-	db := database.GetDB()
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
+func (c *productController) GetProducts(ctx *gin.Context) {
+	// userData := ctx.MustGet("userData").(jwt.MapClaims)
+	// userID := uint(userData["id"].(float64))
 	products := []models.Product{}
-	userID := uint(userData["id"].(float64))
 
-	err := db.Where("user_id = ?", userID).Find(&products).Error
+	products, err := c.productService.GetProducts()
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"messsage": "Internal server error",
+			"error":    err.Error(),
+		})
 		return
 	}
 
