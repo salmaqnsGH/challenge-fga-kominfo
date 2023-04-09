@@ -22,12 +22,12 @@ func NewProductService(productRepository repositories.ProductRepository) *produc
 	return &productService{productRepository}
 }
 
-func (s *productService) CreateProduct(product *models.Product) error {
-	return s.productRepository.Create(product)
-}
-
 func (s *productService) GetProductByID(produntID uint) (*models.Product, error) {
 	return s.productRepository.FindByID(produntID)
+}
+
+func (s *productService) CreateProduct(product *models.Product) error {
+	return s.productRepository.Create(product)
 }
 
 func (s *productService) UpdateProduct(input *models.Product) (*models.Product, error) {

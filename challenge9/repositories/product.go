@@ -23,10 +23,6 @@ func NeProductRepository(db *gorm.DB) *productRepository {
 	return &productRepository{db: db}
 }
 
-func (r *productRepository) Create(product *models.Product) error {
-	return r.db.Create(product).Error
-}
-
 func (r *productRepository) FindByID(productID uint) (*models.Product, error) {
 	var product models.Product
 	err := r.db.Preload("User").First(&product, productID).Error
@@ -34,6 +30,10 @@ func (r *productRepository) FindByID(productID uint) (*models.Product, error) {
 		return nil, err
 	}
 	return &product, nil
+}
+
+func (r *productRepository) Create(product *models.Product) error {
+	return r.db.Create(product).Error
 }
 
 func (r *productRepository) Update(product *models.Product) (*models.Product, error) {
