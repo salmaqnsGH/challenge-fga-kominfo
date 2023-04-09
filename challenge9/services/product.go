@@ -9,6 +9,7 @@ type ProductService interface {
 	CreateProduct(product *models.Product) error
 	GetProductByID(produntID uint) (*models.Product, error)
 	UpdateProduct(input *models.Product) (*models.Product, error)
+	DeleteProduct(ID uint) error
 }
 
 type productService struct {
@@ -42,4 +43,13 @@ func (s *productService) UpdateProduct(input *models.Product) (*models.Product, 
 	}
 
 	return updatedProduct, nil
+}
+
+func (s *productService) DeleteProduct(ID uint) error {
+	err := s.productRepository.Delete(ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

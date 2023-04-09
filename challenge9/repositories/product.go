@@ -10,6 +10,7 @@ type ProductRepository interface {
 	Create(product *models.Product) error
 	FindByID(productID uint) (*models.Product, error)
 	Update(product *models.Product) (*models.Product, error)
+	Delete(ID uint) error
 }
 
 type productRepository struct {
@@ -41,4 +42,13 @@ func (r *productRepository) Update(product *models.Product) (*models.Product, er
 	}
 
 	return product, nil
+}
+
+func (r *productRepository) Delete(ID uint) error {
+	var product models.Product
+	if err := r.db.Where("id = ?", ID).First(&product).Delete(&product).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

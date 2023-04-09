@@ -14,7 +14,7 @@ func New(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
 	// 	productRouter.GET("/", controllers.GetProducts)
-	// 	productRouter.DELETE("/:productID", middlewares.ProductAuthorizationDELETE(), controllers.DeleteProductByID)
+	//
 
 	productRepository := repositories.NeProductRepository(db)
 	productService := services.NewProductService(productRepository)
@@ -33,6 +33,7 @@ func New(db *gorm.DB) *gin.Engine {
 
 			productRouter.POST("/", productController.CreateProduct)
 			// productRouter.GET("/", controllers.GetProducts)
+			productRouter.DELETE("/:productID", middlewares.ProductAuthorizationDELETE(), productController.DeleteProductByID)
 			productRouter.PUT("/:productID", middlewares.ProductAuthorizationPUT(), productController.UpdateProduct)
 			productRouter.GET("/:productID", middlewares.ProductAuthorizationGET(), productController.GetProductByID)
 		}

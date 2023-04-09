@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	database "latihan-jwt/database"
 	"latihan-jwt/models"
 	"latihan-jwt/services"
@@ -67,7 +66,10 @@ func (c *productController) UpdateProduct(ctx *gin.Context) {
 
 	updatedProduct, err := c.productService.UpdateProduct(&product)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"messsage": "Not found",
+			"error":    err.Error(),
+		})
 		return
 	}
 
@@ -95,7 +97,7 @@ func (c *productController) GetProductByID(ctx *gin.Context) {
 	product, err := c.productService.GetProductByID(uint(productID))
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"messsage": "Internal server error",
+			"messsage": "Not found",
 			"error":    err.Error(),
 		})
 		return
@@ -104,25 +106,19 @@ func (c *productController) GetProductByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, product)
 }
 
-func DeleteProductByID(ctx *gin.Context) {
-	db := database.GetDB()
-	product := models.Product{}
+func (c *productController) DeleteProductByID(ctx *gin.Context) {
 	productID, err := strconv.Atoi(ctx.Param("productID"))
 	if err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid product ID"))
 		return
 	}
 
-	err = db.Where("id = ?", productID).First(&product).Error
+	err = c.productService.DeleteProduct(uint(productID))
 	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, errors.New("Product not found"))
-
-		return
-	}
-	fmt.Println(product)
-	err = db.Where("id = ?", productID).First(&product).Delete(&product).Error
-	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"messsage": "Not found",
+			"error":    err.Error(),
+		})
 		return
 	}
 
