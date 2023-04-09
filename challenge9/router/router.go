@@ -33,7 +33,7 @@ func New(db *gorm.DB) *gin.Engine {
 
 			productRouter.POST("/", productController.CreateProduct)
 			// productRouter.GET("/", controllers.GetProducts)
-			// productRouter.PUT("/:productID", middlewares.ProductAuthorizationPUT(), controllers.UpdateProduct)
+			productRouter.PUT("/:productID", middlewares.ProductAuthorizationPUT(), productController.UpdateProduct)
 			productRouter.GET("/:productID", middlewares.ProductAuthorizationGET(), productController.GetProductByID)
 		}
 	}

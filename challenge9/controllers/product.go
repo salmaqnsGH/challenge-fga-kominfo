@@ -48,8 +48,7 @@ func (c *productController) CreateProduct(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, product)
 }
 
-func UpdateProduct(ctx *gin.Context) {
-	db := database.GetDB()
+func (c *productController) UpdateProduct(ctx *gin.Context) {
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	product := models.Product{}
 	productID, _ := strconv.Atoi(ctx.Param("productID"))
@@ -66,13 +65,13 @@ func UpdateProduct(ctx *gin.Context) {
 	product.UserID = uint(userData["id"].(float64))
 	product.ID = uint(productID)
 
-	err = db.Model(&product).Where("id=?", productID).Updates(models.Product{Title: product.Title, Description: product.Description}).Error
+	updatedProduct, err := c.productService.UpdateProduct(&product)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, product)
+	ctx.JSON(http.StatusOK, updatedProduct)
 }
 
 func GetProducts(ctx *gin.Context) {
