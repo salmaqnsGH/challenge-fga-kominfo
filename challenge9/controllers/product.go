@@ -76,9 +76,22 @@ func (c *productController) UpdateProduct(ctx *gin.Context) {
 }
 
 func (c *productController) GetProducts(ctx *gin.Context) {
-	// userData := ctx.MustGet("userData").(jwt.MapClaims)
-	// userID := uint(userData["id"].(float64))
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	userID := uint(userData["id"].(float64))
+	userRole := userData["role"]
 	products := []models.Product{}
+
+	if userRole == "user" {
+		products, err := c.productService.GetProductsByUserID(userID)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"messsage": "Internal server error",
+				"error":    err.Error(),
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, products)
+	}
 
 	products, err := c.productService.GetProducts()
 	if err != nil {
@@ -88,7 +101,6 @@ func (c *productController) GetProducts(ctx *gin.Context) {
 		})
 		return
 	}
-
 	ctx.JSON(http.StatusOK, products)
 }
 

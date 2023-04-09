@@ -12,6 +12,7 @@ type ProductRepository interface {
 	Update(product *models.Product) (*models.Product, error)
 	Delete(ID uint) error
 	FindAll() ([]models.Product, error)
+	FindAllByUserID(userID uint) ([]models.Product, error)
 }
 
 type productRepository struct {
@@ -63,4 +64,13 @@ func (r *productRepository) FindAll() ([]models.Product, error) {
 	}
 
 	return product, nil
+}
+
+func (r *productRepository) FindAllByUserID(userID uint) ([]models.Product, error) {
+	var products []models.Product
+	if err := r.db.Where("user_id = ?", userID).Find(&products).Error; err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }

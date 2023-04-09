@@ -10,6 +10,7 @@ type ProductService interface {
 	GetProductByID(produntID uint) (*models.Product, error)
 	UpdateProduct(input *models.Product) (*models.Product, error)
 	DeleteProduct(ID uint) error
+	GetProductsByUserID(userID uint) ([]models.Product, error)
 	GetProducts() ([]models.Product, error)
 }
 
@@ -55,11 +56,20 @@ func (s *productService) DeleteProduct(ID uint) error {
 	return nil
 }
 
-func (s *productService) GetProducts() ([]models.Product, error) {
-	photos, err := s.productRepository.FindAll()
+func (s *productService) GetProductsByUserID(userID uint) ([]models.Product, error) {
+	products, err := s.productRepository.FindAllByUserID(userID)
 	if err != nil {
-		return photos, err
+		return products, err
 	}
 
-	return photos, nil
+	return products, nil
+}
+
+func (s *productService) GetProducts() ([]models.Product, error) {
+	products, err := s.productRepository.FindAll()
+	if err != nil {
+		return products, err
+	}
+
+	return products, nil
 }
