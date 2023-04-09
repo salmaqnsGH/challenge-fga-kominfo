@@ -94,7 +94,10 @@ func (c *productController) GetProductByID(ctx *gin.Context) {
 
 	product, err := c.productService.GetProductByID(uint(productID))
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"messsage": "Internal server error",
+			"error":    err.Error(),
+		})
 		return
 	}
 
