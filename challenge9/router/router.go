@@ -30,9 +30,9 @@ func New(db *gorm.DB) *gin.Engine {
 
 			productRouter.POST("/", productController.CreateProduct)
 			productRouter.GET("/", productController.GetProducts)
-			productRouter.DELETE("/:productID", middlewares.ProductAuthorizationDELETE(), productController.DeleteProductByID)
-			productRouter.PUT("/:productID", middlewares.ProductAuthorizationPUT(), productController.UpdateProduct)
-			productRouter.GET("/:productID", middlewares.ProductAuthorizationGET(), productController.GetProductByID)
+			productRouter.DELETE("/:productID", middlewares.ProductAuthorization(), productController.DeleteProductByID)
+			productRouter.PUT("/:productID", middlewares.ProductAuthorization(), productController.UpdateProduct)
+			productRouter.GET("/:productID", productController.GetProductByID)
 		}
 	}
 	return r
