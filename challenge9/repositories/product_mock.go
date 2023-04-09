@@ -22,6 +22,18 @@ func (r *MockProductRepository) FindByID(productID uint) (*models.Product, error
 	return product, arguments.Error(1)
 }
 
+func (r *MockProductRepository) FindAll() ([]models.Product, error) {
+	arguments := r.Mock.Called()
+
+	if arguments.Get(0) == nil {
+		return nil, arguments.Error(1)
+	}
+
+	products := arguments.Get(0).([]models.Product)
+
+	return products, arguments.Error(1)
+}
+
 func (r *MockProductRepository) Create(product *models.Product) error {
 	arguments := r.Mock.Called(product)
 
@@ -44,18 +56,6 @@ func (r *MockProductRepository) Delete(ID uint) error {
 	arguments := r.Mock.Called(ID)
 
 	return arguments.Error(0)
-}
-
-func (r *MockProductRepository) FindAll() ([]models.Product, error) {
-	arguments := r.Mock.Called()
-
-	if arguments.Get(0) == nil {
-		return nil, arguments.Error(1)
-	}
-
-	products := arguments.Get(0).([]models.Product)
-
-	return products, arguments.Error(1)
 }
 
 func (r *MockProductRepository) FindAllByUserID(userID uint) ([]models.Product, error) {
