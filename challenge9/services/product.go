@@ -7,6 +7,7 @@ import (
 
 type ProductService interface {
 	CreateProduct(product *models.Product) error
+	GetProductByID(produntID uint) (*models.Product, error)
 }
 
 type productService struct {
@@ -19,4 +20,8 @@ func NewProductService(productRepository repositories.ProductRepository) *produc
 
 func (s *productService) CreateProduct(product *models.Product) error {
 	return s.productRepository.CreateProduct(product)
+}
+
+func (s *productService) GetProductByID(produntID uint) (*models.Product, error) {
+	return s.productRepository.GetProductByID(produntID)
 }

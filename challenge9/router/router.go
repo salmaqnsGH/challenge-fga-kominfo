@@ -13,22 +13,13 @@ import (
 func New(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
-	// productRouter := r.Group("products")
-	// {
-	// 	productRouter.Use(middlewares.Authentication())
-	// 	productRouter.POST("/", controllers.CreateProduct)
-
-	// 	productRouter.PUT("/:productID", middlewares.ProductAuthorizationPUT(), controllers.UpdateProduct)
-
 	// 	productRouter.GET("/", controllers.GetProducts)
-	// 	productRouter.GET("/:productID", middlewares.ProductAuthorizationGET(), controllers.GetProductByID)
 	// 	productRouter.DELETE("/:productID", middlewares.ProductAuthorizationDELETE(), controllers.DeleteProductByID)
-	// }
 
 	productRepository := repositories.NeProductRepository(db)
 	productService := services.NewProductService(productRepository)
 	productController := controllers.NewProducrController(productService)
-	// Define routes
+
 	v1 := r.Group("/api/v1")
 	{
 		userRouter := v1.Group("users")
@@ -39,8 +30,11 @@ func New(db *gorm.DB) *gin.Engine {
 		productRouter := v1.Group("/products")
 		{
 			productRouter.Use(middlewares.Authentication())
+
 			productRouter.POST("/", productController.CreateProduct)
-			productRouter.GET("/", controllers.GetProducts)
+			// productRouter.GET("/", controllers.GetProducts)
+			// productRouter.PUT("/:productID", middlewares.ProductAuthorizationPUT(), controllers.UpdateProduct)
+			productRouter.GET("/:productID", middlewares.ProductAuthorizationGET(), productController.GetProductByID)
 		}
 	}
 	return r
