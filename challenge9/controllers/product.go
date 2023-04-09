@@ -5,6 +5,7 @@ import (
 	"fmt"
 	database "latihan-jwt/database"
 	"latihan-jwt/models"
+	"latihan-jwt/services"
 	"net/http"
 	"strconv"
 
@@ -12,8 +13,15 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func CreateProduct(ctx *gin.Context) {
-	db := database.GetDB()
+type productController struct {
+	productService services.ProductService
+}
+
+func NewProducrController(productService services.ProductService) *productController {
+	return &productController{productService}
+}
+
+func (c *productController) CreateProduct(ctx *gin.Context) {
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	product := models.Product{}
 
@@ -28,7 +36,7 @@ func CreateProduct(ctx *gin.Context) {
 
 	product.UserID = uint(userData["id"].(float64))
 
-	err = db.Create(&product).Error
+	err = c.productService.CreateProduct(&product)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"messsage": "Internal server error",

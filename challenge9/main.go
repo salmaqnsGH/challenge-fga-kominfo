@@ -8,5 +8,6 @@ import (
 func main() {
 	database.StartDB()
 
-	router.New().Run(":3000")
+	db := database.GetDB()
+	router.New(db).Run(":3000")
 }
