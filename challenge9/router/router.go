@@ -31,7 +31,7 @@ func New(db *gorm.DB) *gin.Engine {
 	// Define routes
 	v1 := r.Group("/api/v1")
 	{
-		userRouter := r.Group("users")
+		userRouter := v1.Group("users")
 		{
 			userRouter.POST("/register", controllers.RegisterUser)
 			userRouter.POST("/login", controllers.LoginUser)
